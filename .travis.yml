@@ -27,5 +27,5 @@ after_success:
     echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
     ./kubectl --kubeconfig config apply -f kube;
     ./kubectl --kubeconfig config set --namespace=production image deployment/nodecraft nodecraft=zihao/nodecraft;
-    rm config config.bin;
+    rm config;
     fi

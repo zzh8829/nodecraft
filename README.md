@@ -1,7 +1,6 @@
-[![build status](https://gitlab.com/zzh8829/craft/badges/master/build.svg)](https://gitlab.com/zzh8829/craft/commits/master)
-[![coverage report](https://gitlab.com/zzh8829/craft/badges/master/coverage.svg)](https://gitlab.com/zzh8829/craft/commits/master)
+[![Build Status](https://travis-ci.org/zzh8829/nodecraft.svg?branch=master)](https://travis-ci.org/zzh8829/nodecraft)
 
 # Craft
 
-Multiplayer Minecraft in Node.js
+mini multiplayer Minecraft clone in Node.js
 

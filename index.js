@@ -9,7 +9,7 @@ app.enable('trust proxy');
 app.disable('X-Powered-By');
 
 app.get('/healthz', function(req, res) {
-  res.send();
+  res.send("ok");
 });
 
 let blocks = {};
