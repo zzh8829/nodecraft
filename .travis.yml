@@ -11,7 +11,8 @@ install:
   - yarn 
 
 script:
-  - node index.js
+  - node index.js &
+  - sleep 3
   - curl localhost:8000
 
 after_success:
@@ -23,8 +24,7 @@ after_success:
     docker push zihao/nodecraft;
     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl;
     chmod +x kubectl;
-    echo "$KUBE_CONFIG_BASE64" > config.bin;
-    uudecode -o config config.bin;
+    echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
     ./kubectl --kubeconfig config apply -f kube;
     ./kubectl --kubeconfig config set --namespace=production image deployment/nodecraft nodecraft=zihao/nodecraft;
     rm config config.bin
