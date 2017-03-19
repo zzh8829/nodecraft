@@ -13,7 +13,7 @@ install:
 script:
   - node index.js &
   - sleep 3
-  - curl localhost:8000
+  - curl localhost:8000/healthz
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
@@ -27,5 +27,5 @@ after_success:
     echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
     ./kubectl --kubeconfig config apply -f kube;
     ./kubectl --kubeconfig config set --namespace=production image deployment/nodecraft nodecraft=zihao/nodecraft;
-    rm config config.bin
+    rm config config.bin;
     fi
