@@ -29,6 +29,6 @@ after_success:
     chmod +x kubectl;
     echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
     ./kubectl --kubeconfig config apply -f kube;
-    ./kubectl --kubeconfig config patch deployment --namespace=production $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}"
+    ./kubectl --kubeconfig config patch deployment --namespace=production $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}";
     rm config;
     fi
