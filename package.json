@@ -1,0 +1,13 @@
+{
+  "name": "craft",
+  "version": "1.0.0",
+  "description": "craft server",
+  "main": "index.js",
+  "repository": "git@gitlab.com:zzh8829/craft.git",
+  "author": "Zihao Zhang <zzh8829@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
+}

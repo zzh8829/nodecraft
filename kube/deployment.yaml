@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nodecraft
+  namespace: production
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: nodecraft
+    spec:
+      containers:
+      - name: nodecraft
+        image: zihao/nodecraft
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
