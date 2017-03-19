@@ -7,6 +7,10 @@ node_js:
 services:
   - docker
 
+env:
+  - NAME=nodecraft
+  - IMAGE=zihao/$NAME:latest
+
 install:
   - yarn 
 
@@ -17,15 +21,15 @@ script:
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker build -t zihao/nodecraft .;
-    docker run -d zihao/nodecraft;
+    docker build -t $IMAGE .;
+    docker run -d $IMAGE;
     docker ps -a;
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push zihao/nodecraft;
+    docker push $IMAGE;
     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl;
     chmod +x kubectl;
     echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
     ./kubectl --kubeconfig config apply -f kube;
-    ./kubectl --kubeconfig config set --namespace=production image deployment/nodecraft nodecraft=zihao/nodecraft;
+    ./kubectl --kubeconfig config patch deployment --namespace=production $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}"
     rm config;
     fi
