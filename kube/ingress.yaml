@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - nodecraft.kube.zihao.ca
+    - nodecraft.kube.zihao.me
     secretName: nodecraft-tls
   rules:
-  - host: nodecraft.kube.zihao.ca
+  - host: nodecraft.kube.zihao.me
     http:
       paths:
       - backend:
