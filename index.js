@@ -6,7 +6,7 @@ const port   = process.env.PORT || 8000;
 
 app.set('port', port);
 app.enable('trust proxy');
-app.disable('X-Powered-By');
+app.disable('x-powered-by');
 
 app.get('/healthz', function(req, res) {
   res.send("ok");
