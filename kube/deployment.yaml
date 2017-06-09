@@ -4,7 +4,7 @@ metadata:
   name: nodecraft
 spec:
   replicas: 1
-  revisionHistoryLimit: 2
+  revisionHistoryLimit: 1
   template:
     metadata:
       labels:
