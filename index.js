@@ -12,7 +12,21 @@ app.get('/healthz', function(req, res) {
   res.send("ok");
 });
 
-let blocks = {};
+const mapcache    = require('./mapcache');
+
+let block = mapcache.latest() || {};
+
+// Every 4 Hours
+var CronJob = require('cron').CronJob
+new CronJob('01 00 */4 * * *', function() {
+  mapcache.save(block);
+}, null, true, 'UTC');
+
+app.get('/mapcache', function(req, res) {
+  mapcache.load(function(json) {
+    res.json(json)
+  })
+});
 
 io.on('connection', (socket) => {
   socket.emit('init', blocks);
@@ -72,5 +86,33 @@ function generateHeight(width, height) {
   return data;
 }
 /*eslint-enable */
+
+function sendUploadToGCS (req, res, next) {
+  if (!req.file) {
+    return next();
+  }
+
+  const gcsname = Date.now() + req.file.originalname;
+  const file = bucket.file(gcsname);
+
+  const stream = file.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype
+    }
+  });
+
+  stream.on('error', (err) => {
+    req.file.cloudStorageError = err;
+    next(err);
+  });
+
+  stream.on('finish', () => {
+    req.file.cloudStorageObject = gcsname;
+    req.file.cloudStoragePublicUrl = getPublicUrl(gcsname);
+    next();
+  });
+
+  stream.end(req.file.buffer);
+}
 
 server.listen(port);

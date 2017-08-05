@@ -23,3 +23,30 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 30
           timeoutSeconds: 5
+        env:
+          - name: S3_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: nodecraft
+                key: S3_ENDPOINT
+          - name: S3_ACCESS_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: nodecraft
+                key: S3_ACCESS_KEY
+          - name: S3_SECRET_KEY
+            valueFrom:
+              configMapKeyRef:
+                name: nodecraft
+                key: S3_SECRET_KEY
+          - name: S3_REGION
+            valueFrom:
+              configMapKeyRef:
+                name: nodecraft
+                key: S3_REGION
+          - name: S3_BUCKET
+            valueFrom:
+              configMapKeyRef:
+                name: nodecraft
+                key: S3_BUCKET
+
