@@ -7,11 +7,15 @@ node_js:
 services:
   - docker
 
+cache:
+  directories:
+  - "$HOME/google-cloud-sdk/"
+
 env:
-  - NAME=nodecraft IMAGE=zihao/$NAME:latest
+  - NAME=nodecraft IMAGE=zihao/$NAME:latest CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 install:
-  - yarn 
+  - yarn
 
 script:
   - node index.js &
@@ -19,16 +23,20 @@ script:
   - curl localhost:8000/healthz
 
 after_success:
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - echo $GCLOUD_KEY_BASE64 | base64 --decode > gcloud.json
+  - gcloud auth activate-service-account $GCLOUD_EMAIL --key-file gcloud.json
+  - gcloud config set project gcloud-zihao
+  - gcloud config set compute/zone us-west1-a
+  - gcloud container clusters get-credentials zihao
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker build -t $IMAGE .;
     docker run -d $IMAGE;
     docker ps -a;
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push $IMAGE;
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl;
-    chmod +x kubectl;
-    echo "$KUBE_CONFIG_BASE64" | base64 --decode > config;
-    ./kubectl --kubeconfig config apply -f kube;
-    ./kubectl --kubeconfig config patch deployment $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}";
-    rm config;
+    kubectl apply -f kube;
+    kubectl patch deployment $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}";
     fi
