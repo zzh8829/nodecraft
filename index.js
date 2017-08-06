@@ -12,14 +12,14 @@ app.get('/healthz', function(req, res) {
   res.send("ok");
 });
 
-const mapcache    = require('./mapcache');
+const mapcache = require('./mapcache');
 
-let block = mapcache.latest() || {};
+let blocks = mapcache.latest() || {};
 
 // Every 4 Hours
 var CronJob = require('cron').CronJob
 new CronJob('01 00 */4 * * *', function() {
-  mapcache.save(block);
+  mapcache.save(blocks);
 }, null, true, 'UTC');
 
 app.get('/mapcache', function(req, res) {
