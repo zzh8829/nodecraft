@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - nodecraft.kube.zihao.me
+    - nodecraft.cloud.zihao.me
     secretName: nodecraft-tls
   rules:
-  - host: nodecraft.kube.zihao.me
+  - host: nodecraft.cloud.zihao.me
     http:
       paths:
       - backend:

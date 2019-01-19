@@ -49,4 +49,8 @@ spec:
               configMapKeyRef:
                 name: nodecraft
                 key: S3_BUCKET
+        resources:
+          requests:
+            cpu: 10m
+            memory: 40Mi
 
