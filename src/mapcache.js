@@ -92,7 +92,7 @@ function readCache(file) {
 module.exports = {
   latest: function() {
     try {
-      fn = glob.sync("mapcache/*.json").sort().pop()
+      const fn = glob.sync("mapcache/*.json").sort().pop()
       return JSON.parse(fs.readFileSync(fn))['data'];
     } catch (err) {
       console.log(err);

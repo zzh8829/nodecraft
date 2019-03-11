@@ -1,19 +1,30 @@
 {
   "name": "craft",
   "version": "1.0.0",
-  "description": "craft server",
-  "main": "index.js",
-  "repository": "git@gitlab.com:zzh8829/craft.git",
+  "description": "nodecraft server",
+  "scripts": {
+    "build": "babel src -d dist",
+    "start": "nodemon --exec babel-node src/app.js",
+    "start-prod": "node dist/app.js"
+  },
+  "repository": "git@github.com:zzh8829/nodecraft.git",
   "author": "Zihao Zhang <zzh8829@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "cron": "^1.2.1",
-    "express": "^4.15.2",
-    "glob": "^7.1.2",
-    "lodash": "^4.17.4",
-    "moment": "^2.18.1",
+    "bluebird": "^3.5.3",
+    "cron": "^1.7.0",
+    "express": "^4.16.4",
+    "glob": "^7.1.3",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "s3": "^4.4.0",
-    "socket.io": "^1.7.3"
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.3.4",
+    "nodemon": "^1.18.10"
   }
 }

@@ -18,9 +18,7 @@ install:
   - yarn
 
 script:
-  - node index.js &
-  - sleep 3
-  - curl localhost:8000/healthz
+  - sleep 1
 
 after_success:
   - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi

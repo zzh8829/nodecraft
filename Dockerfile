@@ -1,12 +1,13 @@
-FROM node:boron
+FROM node:11-alpine
 
-RUN mkdir -p /app
-WORKDIR /app
+RUN mkdir -p /zz/nodecraft
+WORKDIR /zz/nodecraft
 
-COPY package.json .
+COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
+RUN yarn build
 
 EXPOSE 8000
-CMD node index.js
+CMD node dist/app.js
