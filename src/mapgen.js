@@ -16,12 +16,13 @@ function generateMap() {
   const blocks = {};
   for (let z = 0; z < worldDepth; z++) {
     for (let x = 0; x < worldWidth; x++) {
-      pos = [x - worldHalfWidth, getY(x, z), z - worldHalfDepth];
+      const pos = [x - worldHalfWidth, getY(x, z), z - worldHalfDepth];
       blocks[pos] = true;
     }
   }
   return blocks;
 }
+
 function generateHeight(width, height) {
   var data = [], perlin = ImprovedNoise(),
     size = width * height, quality = 2, z = Math.random() * 100;

@@ -34,16 +34,16 @@ app.get('/mapcache', (req, res) => {
 io.on('connection', (socket) => {
   socket.emit('init', blocks);
   socket.on('insert', (data) => {
-    blocks[data] = true;
+    blocks[data.pos] = data.material;
     socket.broadcast.emit('insert', data);
   });
   socket.on('delete', (data) => {
-    delete blocks[data];
+    delete blocks[data.pos];
     socket.broadcast.emit('delete', data);
   });
   socket.on('clear', (data) => {
     blocks = {};
-    socket.broadcast.emit('clear', data);
+    socket.broadcast.emit('clear');
   });
   socket.on('generate', () => {
     io.sockets.emit('clear');
