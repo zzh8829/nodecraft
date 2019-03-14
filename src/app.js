@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import socketio from 'socket.io'
+import { CronJob } from 'cron';
 import mapcache from './mapcache'
 import { generateMap } from './mapgen'
 
@@ -20,7 +21,6 @@ app.get('/healthz', (req, res) => {
 let blocks = mapcache.latest() || {};
 
 // Every 4 Hours
-var CronJob = require('cron').CronJob
 new CronJob('01 00 */4 * * *', () => {
   mapcache.save(blocks);
 }, null, true, 'UTC');

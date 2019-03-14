@@ -15,12 +15,12 @@ const client = s3.createClient({
   },
 });
 
-function getTag(delta=0) {
+function getTag(delta = 0) {
   return moment.utc().subtract(delta, 'days').format('YYYY-MM-DD hh_mm_ss')
 }
 
-function getFilename(delta=0) {
-  return 'mapcache/' + getTag(delta)  + '.json'
+function getFilename(delta = 0) {
+  return 'mapcache/' + getTag(delta) + '.json'
 }
 
 function download(file, callback) {
@@ -35,14 +35,14 @@ function download(file, callback) {
     };
 
     var downloader = client.downloadFile(params);
-    downloader.on('error', function(err) {
+    downloader.on('error', function (err) {
       console.error("unable to download:", err.stack);
       reject(err);
     });
-    downloader.on('progress', function() {
+    downloader.on('progress', function () {
       console.log("progress", downloader.progressAmount, downloader.progressTotal);
     });
-    downloader.on('end', function() {
+    downloader.on('end', function () {
       console.log("done downloading");
       resolve(file);
     });
@@ -61,15 +61,15 @@ function upload(file, callback) {
     };
 
     var uploader = client.uploadFile(params);
-    uploader.on('error', function(err) {
+    uploader.on('error', function (err) {
       console.error("unable to upload:", err.stack);
       reject(err);
     });
-    uploader.on('progress', function() {
+    uploader.on('progress', function () {
       console.log("progress", uploader.progressMd5Amount,
-                uploader.progressAmount, uploader.progressTotal);
+        uploader.progressAmount, uploader.progressTotal);
     });
-    uploader.on('end', function() {
+    uploader.on('end', function () {
       console.log("done uploading");
       resolve();
     });
@@ -79,7 +79,7 @@ function upload(file, callback) {
 function readCache(file) {
   return new Promise((resolve, reject) => {
     fs.readFile(file, (err, data) => {
-      if(err) {
+      if (err) {
         console.log(err);
         resolve(null);
       } else {
@@ -90,7 +90,7 @@ function readCache(file) {
 }
 
 module.exports = {
-  latest: function() {
+  latest: function () {
     try {
       const fn = glob.sync("mapcache/*.json").sort().pop()
       return JSON.parse(fs.readFileSync(fn))['data'];
@@ -99,26 +99,26 @@ module.exports = {
       return {};
     }
   },
-  load: function(cb) {
+  load: function (cb) {
     glob("mapcache/*.json", (err, lst) => {
       if (err) {
         console.log(err);
         return cb([]);
       }
       // 7 days
-      Promise.all(lst.sort().slice(-(6*7)).map(readCache))
+      Promise.all(lst.sort().slice(-(6 * 7)).map(readCache))
         .then((obj) => {
           cb(_.compact(obj))
         })
     })
   },
-  save: function(obj, cb) {
-    data = JSON.stringify({
+  save: function (obj, cb) {
+    const data = JSON.stringify({
       tag: getTag(),
       data: obj
     });
     fs.writeFile('mapcache/' + getTag() + '.json', data, (err) => {
-      if(err) {
+      if (err) {
         console.log(err);
       }
     })
