@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import cors from 'cors';
 import socketio from 'socket.io'
 import { CronJob } from 'cron';
 import mapcache from './mapcache'
@@ -13,6 +14,7 @@ const port = process.env.PORT || 8000;
 app.set('port', port);
 app.enable('trust proxy');
 app.disable('x-powered-by');
+app.use(cors())
 
 app.get('/healthz', (req, res) => {
   res.send("ok");
