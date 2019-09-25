@@ -1,19 +1,18 @@
-const s3 = require('s3');
+// const s3 = require('s3');
 const moment = require('moment');
-const Promise = require('bluebird');
 const fs = require('fs')
 const _ = require('lodash');
 const glob = require('glob');
 
-const client = s3.createClient({
-  s3Options: {
-    endpint: process.env.S3_ENDPOINT,
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env._SECRET_KEY,
-    region: process.env.S3_REGION,
-    sslEnabled: true
-  },
-});
+// const client = s3.createClient({
+//   s3Options: {
+//     endpint: process.env.S3_ENDPOINT,
+//     accessKeyId: process.env.S3_ACCESS_KEY,
+//     secretAccessKey: process.env._SECRET_KEY,
+//     region: process.env.S3_REGION,
+//     sslEnabled: true
+//   },
+// });
 
 function getTag(delta = 0) {
   return moment.utc().subtract(delta, 'days').format('YYYY-MM-DD hh_mm_ss')

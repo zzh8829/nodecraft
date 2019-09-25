@@ -1,4 +1,4 @@
 *
 */
 !.gitignore
-!00-default.json
+!00-*-*.json
