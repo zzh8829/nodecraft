@@ -25,7 +25,13 @@ jobs:
         docker build -t $IMAGE:$GIT_SHA -t $IMAGE:latest --cache-from $IMAGE:latest
         docker push $IMAGE:$GIT_SHA
         docker push $IMAGE:latest
-    - name: Deploy
+    - name: 'Deploy'
+      uses: 'deliverybot/helm@v1'
+      with:
+        release: 'nodecraft'
+        namespace: 'default'
+        chart: './helm'
+        token: '${{ secrets.GITHUB_TOKEN }}'
     - name: Discord Succeeded
       uses: appleboy/discord-action@0.0.2
       env:
