@@ -25,19 +25,24 @@ jobs:
           docker build -t $IMAGE:$GITHUB_SHA -t $IMAGE:latest --cache-from $IMAGE:latest .
           docker push $IMAGE:$GITHUB_SHA
           docker push $IMAGE:latest
-      - name: "Deploy"
-        uses: "deliverybot/helm@v1"
-        with:
-          release: "nodecraft"
-          namespace: "default"
-          chart: "./helm"
-          token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: GKE Deploy
+        uses: docker://kiwigrid/gcloud-kubectl-helm
+        run: |
+          gcloud components update kubectl
+          echo $GCLOUD_PRIVATE_KEY | base64 --decode > gcloud.json
+          gcloud auth activate-service-account --key-file gcloud.json
+          gcloud config set project gcloud-zihao
+          gcloud config set compute/zone us-west1-a
+          gcloud container clusters get-credentials zz-gke
+          helm plugin install https://github.com/rimusz/helm-tiller
+          helm tiller run helm upgrade nodecraft ./helm
       - name: Discord Succeeded
         uses: docker://appleboy/drone-discord:1.2.3-linux-amd64
         env:
           WEBHOOK_ID: "${{ secrets.DISCORD_WEBHOOK_ID }}"
           WEBHOOK_TOKEN: "${{ secrets.DISCORD_WEBHOOK_TOKEN }}"
           COLOR: "#49C39E"
+          PLUGIN_GITHUB: "true"
         with:
           args: "[${{ github.workflow }}] [${{ github.repository }}:${{ github.ref }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}/checks) Succeeded"
       - name: Discord Failed
@@ -47,6 +52,7 @@ jobs:
           WEBHOOK_ID: "${{ secrets.DISCORD_WEBHOOK_ID }}"
           WEBHOOK_TOKEN: "${{ secrets.DISCORD_WEBHOOK_TOKEN }}"
           COLOR: "#D40E0D"
+          PLUGIN_GITHUB: "true"
         with:
           args: "[${{ github.workflow }}] [${{ github.repository }}:${{ github.ref }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}/checks) Failed"
 # env:
