@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    - name: Login
+      uses: azure/container-actions/docker-login@master
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build
+      env:
+        IMAGE: zihao/nodecraft
+      run: |
+        docker pull $IMAGE:latest || true
+        docker build -t $IMAGE:$GIT_SHA -t $IMAGE:latest --cache-from $IMAGE:latest
+        docker push $IMAGE:$GIT_SHA
+        docker push $IMAGE:latest
+    - name: Deploy
+    - name: Discord Succeeded
+      uses: appleboy/discord-action@0.0.2
+      env:
+        WEBHOOK_ID: "${{ secrets.DISCORD_WEBHOOK_ID }}"
+        WEBHOOK_TOKEN: "${{ secrets.DISCORD_WEBHOOK_TOKEN }}"
+        COLOR: "#49C39E"
+      with:
+        args: "[CI] $GITHUB_REPOSITORY:$GITHUB_REF Succeeded"
+    - name: Discord Failed
+      if: failure()
+      uses: appleboy/discord-action@0.0.2
+      env:
+        WEBHOOK_ID: "${{ secrets.DISCORD_WEBHOOK_ID }}"
+        WEBHOOK_TOKEN: "${{ secrets.DISCORD_WEBHOOK_TOKEN }}"
+        COLOR: "#D40E0D"
+      with:
+        args: "[CI] $GITHUB_REPOSITORY:$GITHUB_REF Failed"
+
+
+env:
+  - NAME=nodecraft IMAGE=zihao/$NAME:latest CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
+script:
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - echo $GCLOUD_KEY_BASE64 | base64 --decode > gcloud.json
+  - gcloud auth activate-service-account $GCLOUD_EMAIL --key-file gcloud.json
+  - gcloud config set project gcloud-zihao
+  - gcloud config set compute/zone us-west1-a
+  - gcloud container clusters get-credentials zz-gke
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker build -t $IMAGE .;
+    docker run -d $IMAGE;
+    docker ps -a;
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push $IMAGE;
+    kubectl apply -f kube;
+    kubectl patch deployment $NAME -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`env TZ="UTC" date +'%F_%s'`\"}}}}}";
+    fi
