@@ -26,7 +26,12 @@ jobs:
           docker push $IMAGE:$GITHUB_SHA
           docker push $IMAGE:latest
       - name: GKE Deploy
+        env:
+          CLOUDSDK_CORE_DISABLE_PROMPTS: 1
         run: |
+          sudo apt-get remove google-cloud-sdk
+          curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-264.0.0-linux-x86_64.tar.gz | tar xz
+          ./google-cloud-sdk/install.sh
           echo ${{ secrets.GCLOUD_PRIVATE_KEY }} | base64 --decode > gcloud.json
           gcloud auth activate-service-account --key-file gcloud.json
           gcloud config set project gcloud-zihao
