@@ -56,5 +56,3 @@ jobs:
           WEBHOOK_TOKEN: "${{ secrets.DISCORD_WEBHOOK_TOKEN }}"
           COLOR: "#D40E0D"
           DISCORD_MESSAGE: "[${{ github.workflow }}] [${{ github.repository }}:${{ github.ref }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}/checks) Failed"
-# env:
-#   - NAME=nodecraft IMAGE=zihao/$NAME:latest CLOUDSDK_CORE_DISABLE_PROMPTS=1
