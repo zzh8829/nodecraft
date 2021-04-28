@@ -36,7 +36,6 @@ jobs:
           sudo apt-get install -yqq kubectl
           gcloud container clusters get-credentials zz-gke
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-          helm init --client-only
           helm upgrade --install nodecraft ./helm --set image=zihao/nodecraft:$GITHUB_SHA
       - name: Discord Succeeded
         uses: docker://appleboy/drone-discord:1.2.3-linux-amd64
