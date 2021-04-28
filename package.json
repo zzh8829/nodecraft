@@ -4,8 +4,8 @@
   "description": "nodecraft server",
   "scripts": {
     "build": "babel src -d dist",
-    "start": "nodemon --exec babel-node src/app.js",
-    "start-prod": "node dist/app.js"
+    "start": "node dist/app.js"
+    "dev": "nodemon --exec babel-node src/app.js",
   },
   "repository": "git@github.com:zzh8829/nodecraft.git",
   "author": "Zihao Zhang <zzh8829@gmail.com>",
