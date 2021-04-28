@@ -35,10 +35,9 @@ jobs:
           gcloud config set compute/zone us-west1-a
           sudo apt-get install -yqq kubectl
           gcloud container clusters get-credentials zz-gke
-          curl -L https://git.io/get_helm.sh | bash
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
           helm init --client-only
-          helm plugin install https://github.com/rimusz/helm-tiller
-          helm tiller run helm upgrade nodecraft ./helm --set image=zihao/nodecraft:$GITHUB_SHA
+          helm upgrade --install nodecraft ./helm --set image=zihao/nodecraft:$GITHUB_SHA
       - name: Discord Succeeded
         uses: docker://appleboy/drone-discord:1.2.3-linux-amd64
         env:
