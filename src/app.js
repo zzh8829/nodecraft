@@ -20,6 +20,7 @@ app.set("port", port);
 app.enable("trust proxy");
 app.disable("x-powered-by");
 app.use(cors());
+app.options('*', cors());
 
 app.get("/healthz", (req, res) => {
   res.send("ok");
