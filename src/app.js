@@ -1,25 +1,30 @@
 import express from "express";
 import http from "http";
 import cors from "cors";
-import socketio from "socket.io";
+import { Server } from "socket.io";
 import { CronJob } from "cron";
 import mapcache from "./mapcache";
 import { generateMap } from "./mapgen";
 import * as Sentry from "@sentry/node";
 
 Sentry.init({
-  dsn: "https://e7cdad7d71814f71b317fe387e00b938@sentry.io/1757753"
+  dsn: "https://e7cdad7d71814f71b317fe387e00b938@sentry.io/1757753",
 });
 
 const app = express();
-const server = http.createServer(app);
-const io = socketio.listen(server);
 const port = process.env.PORT || 8000;
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});
 
 app.set("port", port);
 app.enable("trust proxy");
 app.disable("x-powered-by");
-app.use(cors({credentials: true}));
+app.use(cors({ credentials: true }));
 
 app.get("/healthz", (req, res) => {
   res.send("ok");
@@ -39,22 +44,22 @@ new CronJob(
 );
 
 app.get("/mapcache", (req, res) => {
-  mapcache.load(json => {
+  mapcache.load((json) => {
     res.json(json);
   });
 });
 
-io.on("connection", socket => {
+io.on("connection", (socket) => {
   socket.emit("init", blocks);
-  socket.on("insert", data => {
+  socket.on("insert", (data) => {
     blocks[data.pos] = data.material;
     socket.broadcast.emit("insert", data);
   });
-  socket.on("delete", data => {
+  socket.on("delete", (data) => {
     delete blocks[data.pos];
     socket.broadcast.emit("delete", data);
   });
-  socket.on("clear", data => {
+  socket.on("clear", (data) => {
     blocks = {};
     socket.broadcast.emit("clear");
   });
